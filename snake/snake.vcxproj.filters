@@ -11,6 +11,9 @@
     <Filter Include="Random">
       <UniqueIdentifier>{85bbae96-c9d1-44a1-a51c-434ff17f52b6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{4bb53968-1a8f-4c8f-b2ec-8a563201a5d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="snake.c">
@@ -22,6 +25,9 @@
     <ClCompile Include="Random\Random.c">
       <Filter>Random</Filter>
     </ClCompile>
+    <ClCompile Include="player.c">
+      <Filter>Main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Console\Console.h">
@@ -29,6 +35,12 @@
     </ClInclude>
     <ClInclude Include="Random\Random.h">
       <Filter>Random</Filter>
+    </ClInclude>
+    <ClInclude Include="global.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="player.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

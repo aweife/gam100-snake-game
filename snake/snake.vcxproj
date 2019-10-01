@@ -151,11 +151,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Console\Console.c" />
+    <ClCompile Include="player.c" />
     <ClCompile Include="Random\Random.c" />
     <ClCompile Include="snake.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Console\Console.h" />
+    <ClInclude Include="global.h" />
+    <ClInclude Include="player.h" />
     <ClInclude Include="Random\Random.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

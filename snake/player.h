@@ -1,16 +1,24 @@
 #pragma once
 
-// Snake body
 typedef struct {
 	int x;
 	int y;
+} coordinates;
+
+// Snake body
+typedef struct {
+	int direction; 
+	coordinates position;
+	coordinates moveVector;
+	coordinates tail;
 } snakeBody;
 
-// 1 = up, 2 = right, 3 = down, 4 = left, 0 = stop
-int currentDirection;
+int snakeLength;
 
 void initPlayer();
 void updatePlayer();
-void getInputs();
-void moveInDirection();
-void moveBody(int x, int y, snakeBody* sb);
+void getInput();
+void move(snakeBody* self);
+int setDirection(snakeBody* self, int dir);
+void grow(snakeBody* self, snakeBody* myHead);
+void follow();

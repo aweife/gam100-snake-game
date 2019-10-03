@@ -7,18 +7,18 @@ typedef struct {
 
 // Snake body
 typedef struct {
-	int direction; 
 	coordinates position;
-	coordinates moveVector;
-	coordinates tail;
+	coordinates tailPosition;
 } snakeBody;
 
 int snakeLength;
+int direction;
 
 void initPlayer();
 void updatePlayer();
 void getInput();
-void move(snakeBody* self);
-int setDirection(snakeBody* self, int dir);
-void grow(snakeBody* self, snakeBody* myHead);
+void move();
+void setDirection(int dir);
+void grow();
 void follow();
+void animate();

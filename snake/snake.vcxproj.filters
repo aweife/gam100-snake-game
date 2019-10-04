@@ -14,6 +14,9 @@
     <Filter Include="Header Files">
       <UniqueIdentifier>{4bb53968-1a8f-4c8f-b2ec-8a563201a5d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Clock">
+      <UniqueIdentifier>{cc4e8048-4109-469b-a417-da8c896e9b1b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="snake.c">
@@ -28,6 +31,9 @@
     <ClCompile Include="player.c">
       <Filter>Main</Filter>
     </ClCompile>
+    <ClCompile Include="Clock\Clock.cpp">
+      <Filter>Clock</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Console\Console.h">
@@ -41,6 +47,9 @@
     </ClInclude>
     <ClInclude Include="player.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Clock\Clock.h">
+      <Filter>Clock</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

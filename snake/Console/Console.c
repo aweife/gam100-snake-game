@@ -18,6 +18,7 @@ static CHAR_INFO*	sRenderBuffer			= 0x00;
 static int			sRenderBufferSize		= 0;
 
 static const COORD ORIGIN = { 0,0 };
+
 /**********************************************************************************/
 
 
@@ -172,9 +173,15 @@ void Console_SetSize(int x, int y)
 
 	const COORD size = { x, y };
 	const SMALL_RECT windowSize = { 0, 0, size.X - 1, size.Y - 1 };
+	
+	// HACK: sometimes the windows is not of the asked size, because the Buffer can never be smaller than the windows
+	// FIX: Force a small windows, set buffer, and resize windows to the correct size
+	const SMALL_RECT smallWindowSize = { 0, 0, 1, 1 };
+	SetConsoleWindowInfo(sConsoleHandle, 1, &smallWindowSize);
+	// END HACK
 
-	SetConsoleWindowInfo(sConsoleHandle, 1, &windowSize);
 	SetConsoleScreenBufferSize(sConsoleHandle, size);
+	SetConsoleWindowInfo(sConsoleHandle, 1, &windowSize);
 
 	sConsoleSize = size;
 }

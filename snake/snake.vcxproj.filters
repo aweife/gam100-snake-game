@@ -17,6 +17,9 @@
     <Filter Include="Clock">
       <UniqueIdentifier>{cc4e8048-4109-469b-a417-da8c896e9b1b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="State">
+      <UniqueIdentifier>{339d0f31-1708-4e2b-981d-7e2ffc9bef70}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="snake.c">
@@ -34,6 +37,18 @@
     <ClCompile Include="Clock\Clock.cpp">
       <Filter>Clock</Filter>
     </ClCompile>
+    <ClCompile Include="StateMachine.c">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.c">
+      <Filter>State</Filter>
+    </ClCompile>
+    <ClCompile Include="GameOver.c">
+      <Filter>State</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenu.c">
+      <Filter>State</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Console\Console.h">
@@ -50,6 +65,9 @@
     </ClInclude>
     <ClInclude Include="Clock\Clock.h">
       <Filter>Clock</Filter>
+    </ClInclude>
+    <ClInclude Include="StateMachine.h">
+      <Filter>Main</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

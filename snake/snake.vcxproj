@@ -152,6 +152,7 @@
   <ItemGroup>
     <ClCompile Include="Clock\Clock.cpp" />
     <ClCompile Include="Console\Console.c" />
+    <ClCompile Include="map.c" />
     <ClCompile Include="player.c" />
     <ClCompile Include="Random\Random.c" />
     <ClCompile Include="snake.c" />
@@ -160,6 +161,7 @@
     <ClInclude Include="Clock\Clock.h" />
     <ClInclude Include="Console\Console.h" />
     <ClInclude Include="global.h" />
+    <ClInclude Include="map.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="Random\Random.h" />
   </ItemGroup>

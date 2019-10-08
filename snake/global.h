@@ -1,8 +1,11 @@
 #pragma once
 
-#include <stdio.h>
-#include "Random/Random.h"
 #include "Console/Console.h"
+#include "Clock/Clock.h"
 #include <Windows.h>
+#include <math.h>
+#include <stdio.h>
 
-int bGameIsRunning;
+#define GAME_WIDTH 50
+#define GAME_HEIGHT 50
+#define CONSOLE_HEIGHT 25

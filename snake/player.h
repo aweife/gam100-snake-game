@@ -11,14 +11,27 @@ typedef struct {
 	coordinates tailPosition;
 } snakeBody;
 
-int snakeLength;
-int direction;
+// Direction enum
+typedef enum {
+	DIRECTION_NONE,
+	DIRECTION_UP,
+	DIRECTION_RIGHT,
+	DIRECTION_DOWN,
+	DIRECTION_LEFT
+} DIRECTION;
 
-void initPlayer();
-void updatePlayer();
-void getInput();
+int snakeLength;
+DIRECTION headDirection;
+
+// For now I only store 100 bodies' positions, any more is undefined behaviour
+snakeBody snakeBodyArray[100];
+
+// Player functions
+void player_Init();
+void player_Update();
+void player_GetInput();
 void move();
-void setDirection(int dir);
+void setDirection(DIRECTION dir);
 void grow();
 void follow();
 void animate();

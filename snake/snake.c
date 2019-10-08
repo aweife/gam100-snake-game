@@ -6,8 +6,8 @@
 static int bGameIsRunning;
 
 // Euler method calculation for movement
-//static double EulerX = 0.0f;
-//static double Velocity = 0.001;
+static double euler = 0.0f;
+static double velocity = 0.005;
 
 void initGame();
 void runGame();
@@ -46,7 +46,7 @@ void runGame()
 	Clock_GameLoopStart();
 
 	// Number of pixels to move per second
-	//EulerX += Velocity * Clock_GetDeltaTime();
+	euler = velocity * Clock_GetDeltaTime();
 
 	// First, we record player inputs
 	player_GetInput();
@@ -55,7 +55,7 @@ void runGame()
 	Console_ClearRenderBuffer();
 
 	// Get all objects to update their positions using SetRenderBuffer()
-	player_Update();
+	player_Update(euler);
 	map_Update();
 	//food_Update();
 
@@ -65,7 +65,4 @@ void runGame()
 
 	// Render with updated positions
 	Console_SwapRenderBuffer();
-
-	// Sleep
-	Sleep(250);
 }

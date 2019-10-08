@@ -1,24 +1,26 @@
 #include "global.h"
 #include "player.h"
 
+snakeHead head;
+
 void player_Init()
 {
 	// Init head
-	snakeBodyArray[0].position.x = GAME_WIDTH * 0.5f;
-	snakeBodyArray[0].position.y = GAME_HEIGHT * 0.5f;
-	headDirection = DIRECTION_NONE;
+	head.eulerX = GAME_WIDTH * 0.5f;
+	head.eulerY = GAME_HEIGHT * 0.5f;
+	head.direction = DIRECTION_NONE;
 
-	snakeLength = 1;
+	snakeBodyCount = 0;
 }
 
-void player_Update()
+void player_Update(double euler)
 {
 	// Update head's position
-	move();
+	move(euler);
 
 	// If snake has body already, loop through the bodies and update them to 
 	// take over previous head's position 
-	if (snakeLength > 1) follow();
+	if (snakeBodyCount > 0) follow();
 
 	// Set in render buffer each part's updated position
 	animate();
@@ -29,74 +31,91 @@ void player_GetInput()
 	// Map player input to direction
 	// Limit the player to turn only (right angle)
 	if (GetAsyncKeyState(VK_UP))
-		if (headDirection != DIRECTION_UP && headDirection != DIRECTION_DOWN)
+		if (head.direction != DIRECTION_UP && head.direction != DIRECTION_DOWN)
 			setDirection(DIRECTION_UP);
 	if (GetAsyncKeyState(VK_RIGHT))
-		if (headDirection != DIRECTION_RIGHT && headDirection != DIRECTION_LEFT)
+		if (head.direction != DIRECTION_RIGHT && head.direction != DIRECTION_LEFT)
 			setDirection(DIRECTION_RIGHT);
 	if (GetAsyncKeyState(VK_DOWN))
-		if (headDirection != DIRECTION_DOWN && headDirection != DIRECTION_UP)
+		if (head.direction != DIRECTION_DOWN && head.direction != DIRECTION_UP)
 			setDirection(DIRECTION_DOWN);
 	if (GetAsyncKeyState(VK_LEFT))
-		if (headDirection != DIRECTION_LEFT && headDirection != DIRECTION_RIGHT)
-			setDirection(DIRECTION_LEFT);
+		if (head.direction != DIRECTION_LEFT && head.direction != DIRECTION_RIGHT) {
+			setDirection(DIRECTION_LEFT); grow();
+		}
 
 	//if (GetAsyncKeyState(VK_SPACE)) bGameIsRunning = 0;
-	if (GetAsyncKeyState(VK_SPACE)) grow(); // Debug grow
+	//if (GetAsyncKeyState(VK_SPACE)) grow(); // Debug grow
 }
 
 void grow()
 {
 	// Update the last tailPosition every time the snake grows
-	snakeBodyArray[snakeLength].position = snakeBodyArray[snakeLength - 1].tailPosition;
-	snakeLength++;
+	if (snakeBodyCount == 0)
+	{
+		snakeBodyArray[0].position = head.position;
+		snakeBodyCount++;
+		snakeBodyCount++;
+		return;
+	}
+	snakeBodyArray[snakeBodyCount].position = snakeBodyArray[snakeBodyCount - 1].position;
+	snakeBodyCount++;
 }
 
 // Move head according to velocity
-void move()
+void move(double euler)
 {
-	// Set (current) position as head's tailPosition
-	snakeBodyArray[0].tailPosition = snakeBodyArray[0].position;
-
 	// Update position according to direction (input by player)
-	switch (headDirection)
+	switch (head.direction)
 	{
 	case DIRECTION_UP:
-		snakeBodyArray[0].position.y--;
+		head.eulerY -= euler;
 		break;
 	case DIRECTION_RIGHT:
-		snakeBodyArray[0].position.x++;
+		head.eulerX += euler;
 		break;
 	case DIRECTION_DOWN:
-		snakeBodyArray[0].position.y++;
+		head.eulerY += euler;
 		break;
 	case DIRECTION_LEFT:
-		snakeBodyArray[0].position.x--;
+		head.eulerX -= euler;
 		break;
 	}
+
+	head.position.x = head.eulerX;
+	head.position.y = head.eulerY;
 }
 
 // Update by player_GetInput()
 void setDirection(DIRECTION dir)
 {
-	headDirection = dir;
+	head.direction = dir;
 }
 
 // Make each body to catch up with their own heads
 void follow()
 {
+	if (head.direction == DIRECTION_UP || head.direction == DIRECTION_DOWN)
+		if (snakeBodyArray[0].position.y == head.position.y) return;
+
+	if (head.direction == DIRECTION_LEFT || head.direction == DIRECTION_RIGHT)
+		if (snakeBodyArray[0].position.x == head.position.x) return;
+
 	// For each body, take over their previous head's tailPosition
-	for (int i = 1; i < snakeLength; i++)
+	for (int i = snakeBodyCount; i > 0; i--)
 	{
-		coordinates currentPos = snakeBodyArray[i].position;
-		snakeBodyArray[i].position = snakeBodyArray[i - 1].tailPosition;
-		snakeBodyArray[i].tailPosition = currentPos;
+		snakeBodyArray[i].position = snakeBodyArray[i - 1].position;
 	}
+	snakeBodyArray[0].position = head.position;
 }
 
 void animate()
 {
-	for (int i = 0; i < snakeLength; i++)
+	// Render head
+	Console_SetRenderBuffer_Char(head.eulerX, head.eulerY, 'O');
+
+	// Render body
+	for (int i = 0; i < snakeBodyCount; i++)
 		Console_SetRenderBuffer_Char(snakeBodyArray[i].position.x, snakeBodyArray[i].position.y, 'O');
 	//Console_Putchar(snakeBodyArray[0].position.x, snakeBodyArray[0].position.y, 'O');
 

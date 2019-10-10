@@ -1,4 +1,3 @@
-#include "global.h"
 #include "player.h"
 
 // For now I only store 100 bodies' positions, any more is undefined behaviour
@@ -18,7 +17,7 @@ void player_Init()
 // Map arrows to player.direction
 void player_GetInput()
 {
-	
+
 	// Limit the player to turn only (right angle)
 	if (GetAsyncKeyState(VK_UP))
 		if (player.direction != DIRECTION_UP && player.direction != DIRECTION_DOWN)
@@ -30,9 +29,9 @@ void player_GetInput()
 		if (player.direction != DIRECTION_DOWN && player.direction != DIRECTION_UP)
 			setDirection(DIRECTION_DOWN);
 	if (GetAsyncKeyState(VK_LEFT))
-		if (player.direction != DIRECTION_LEFT && player.direction != DIRECTION_RIGHT) {
-			setDirection(DIRECTION_LEFT); grow();
-		}
+		if (player.direction != DIRECTION_LEFT && player.direction != DIRECTION_RIGHT)
+			setDirection(DIRECTION_LEFT);
+
 
 	//if (GetAsyncKeyState(VK_SPACE)) bGameIsRunning = 0;
 	//if (GetAsyncKeyState(VK_SPACE)) grow(); // Debug grow
@@ -48,6 +47,7 @@ void grow()
 // Move head according to velocity
 // Update bodies to follow
 // Animate snake on screen
+// Collision check
 void player_Update(double euler)
 {
 	// Update position according to direction (input by player)
@@ -71,11 +71,8 @@ void player_Update(double euler)
 	player.position.x = player.eulerX;
 	player.position.y = player.eulerY;
 
-	// Loop through the bodies from the back and update their positions 
-	// to take over previous head's position 
+	checkCollision();
 	follow();
-
-	// Set in render buffer each part's updated position
 	animate();
 }
 
@@ -85,7 +82,8 @@ void setDirection(DIRECTION dir)
 	player.direction = dir;
 }
 
-// Make each body catch up with their own heads
+// Loop through the bodies from the back and update their positions 
+// to take over previous head's position 
 void follow()
 {
 	// To check if head has moved, if so, update bodies
@@ -98,14 +96,14 @@ void follow()
 		if (snakeBodyArray[0].position.x == player.position.x) return;
 
 	// For each body, take over their previous head's tailPosition
-	for (int i = snakeBodyCount; i > 0; i--)
+	for (int i = snakeBodyCount; i > 1; i--)
 	{
-		snakeBodyArray[i].position = snakeBodyArray[i - 1].position;
+		snakeBodyArray[i - 1].position = snakeBodyArray[i - 2].position;
 	}
 	snakeBodyArray[0].position = player.position;
 }
 
-// Update in render buffer snake's position
+// Set in render buffer each part's updated position
 void animate()
 {
 	// Render the head separately
@@ -114,10 +112,37 @@ void animate()
 	// Render body (+1 because of head
 	for (int i = 1; i < snakeBodyCount; i++)
 		Console_SetRenderBuffer_Char(snakeBodyArray[i].position.x, snakeBodyArray[i].position.y, 'B');
-	
+
 	// OLD CODE: Moving the head and clearing the tail using putchar()
 	//// While snake is moving, only clear the char at the last body's tailPosition
 	//Console_Putchar(snakeBodyArray[0].position.x, snakeBodyArray[0].position.y, 'O');
 	//if (headDirection != 0)
 	//	Console_Putchar(snakeBodyArray[snakeLength - 1].tailPosition.x, snakeBodyArray[snakeLength - 1].tailPosition.y, ' ');
+}
+
+// Check collision with boundary, walls, itself and food
+void checkCollision()
+{
+	// Boundary limits
+	if (player.position.x < 1 ||			// Left side of screen
+		player.position.x > GAME_WIDTH - 1 ||	// Right
+		player.position.y < 1 ||			// Top
+		player.position.y > GAME_HEIGHT - 1)	// Bottom
+		bGameIsRunning = 0;
+
+	// Collision against itself but only from the 4th body part onwards
+	if (snakeBodyCount > 3)
+		for (int i = 3; i < snakeBodyCount; i++)
+			if (player.position.x == snakeBodyArray[i].position.x &&
+				player.position.y == snakeBodyArray[i].position.y)
+				bGameIsRunning = 0;
+
+	if (player.position.x == foodArray[0].x && player.position.y == foodArray[0].y)
+	{
+		// Remove the food first
+		spawnFood();
+
+		// Then grow
+		grow();
+	}
 }

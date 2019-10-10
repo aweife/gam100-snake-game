@@ -1,9 +1,6 @@
 #include "global.h"
-#include "Clock/Clock.h"
 #include "player.h"
 #include "map.h"
-
-static int bGameIsRunning;
 
 // Euler method calculation for movement
 static double euler = 0.0f;
@@ -37,6 +34,7 @@ void initGame()
 
 	// Init player
 	player_Init();
+	spawnFood();
 }
 
 // The game loop

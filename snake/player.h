@@ -1,5 +1,8 @@
 #pragma once
 
+#include "global.h"
+#include "map.h"
+
 // Direction enum
 typedef enum {
 	DIRECTION_NONE,
@@ -8,11 +11,6 @@ typedef enum {
 	DIRECTION_DOWN,
 	DIRECTION_LEFT
 } DIRECTION;
-
-typedef struct {
-	int x;
-	int y;
-} coordinates;
 
 typedef struct {
 	coordinates position;
@@ -36,3 +34,4 @@ void setDirection(DIRECTION dir);
 void grow();
 void follow();
 void animate();
+void checkCollision();

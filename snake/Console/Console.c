@@ -72,6 +72,7 @@ void Console_SwapRenderBuffer()
 
 	// Copy the local rendering buffer to the ConsoleHandle Buffer
 	SMALL_RECT writeRegion = { 0,0,sConsoleSize.X, sConsoleSize.Y };
+
 	if (!WriteConsoleOutputA(sConsoleHandle, sRenderBuffer, sConsoleSize, ORIGIN, &writeRegion) )
 	{
 		DWORD error = GetLastError();

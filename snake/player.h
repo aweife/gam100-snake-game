@@ -28,14 +28,10 @@ typedef struct {
 
 int snakeBodyCount;
 
-// For now I only store 100 bodies' positions, any more is undefined behaviour
-snakeBody snakeBodyArray[100];
-
 // Player functions
 void player_Init();
 void player_Update(double euler);
 void player_GetInput();
-void move(double euler);
 void setDirection(DIRECTION dir);
 void grow();
 void follow();

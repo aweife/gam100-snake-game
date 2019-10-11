@@ -1,19 +1,26 @@
 #include "global.h"
 #include "player.h"
 #include "map.h"
+#include "snake.h"
+#include "StateMachine.h"
+#include "Clock/Clock.h"
 
 // Euler method calculation for movement
 static double euler = 0.0f;
 static double velocity = 0.005;
 
-void initGame();
-void runGame();
-
 int main(void)
 {
+	// initialises game
 	initGame();
-	while (bGameIsRunning) runGame();
 
+	// moves the game towards the game menu
+	StateMachine_ChangeState(State_MainMenu);
+	// checks if the game state has been changed, if so load that change
+	while (bGameIsRunning)
+	{
+	StateMachine_StartFrame();
+	}
 	// Shutdown game
 	Console_CleanUp();
 
@@ -50,7 +57,7 @@ void runGame()
 	player_GetInput();
 
 	// Clear buffer to prepare for next frame
-	Console_ClearRenderBuffer();
+	// Console_ClearRenderBuffer();
 
 	// Get all objects to update their positions using SetRenderBuffer()
 	player_Update(euler);
@@ -62,5 +69,11 @@ void runGame()
 	//printf("eulerx: %f", EulerX);
 
 	// Render with updated positions
-	Console_SwapRenderBuffer();
+	//Console_SwapRenderBuffer();
+}
+
+// Forces the program to exit
+void exitGame()
+{
+	bGameIsRunning = 0;
 }

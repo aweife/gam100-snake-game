@@ -1,4 +1,5 @@
 #include "player.h"
+#include "StateMachine.h"
 
 // For now I only store 100 bodies' positions, any more is undefined behaviour
 snakeBody snakeBodyArray[100];
@@ -128,14 +129,14 @@ void checkCollision()
 		player.position.x > GAME_WIDTH - 1 ||	// Right
 		player.position.y < 1 ||			// Top
 		player.position.y > GAME_HEIGHT - 1)	// Bottom
-		bGameIsRunning = 0;
+		goGameOver();
 
 	// Collision against itself but only from the 4th body part onwards
 	if (snakeBodyCount > 3)
 		for (int i = 3; i < snakeBodyCount; i++)
 			if (player.position.x == snakeBodyArray[i].position.x &&
 				player.position.y == snakeBodyArray[i].position.y)
-				bGameIsRunning = 0;
+				goGameOver();
 
 	if (player.position.x == foodArray[0].x && player.position.y == foodArray[0].y)
 	{

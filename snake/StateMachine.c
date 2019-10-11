@@ -12,8 +12,8 @@ void StateMachine_ChangeState(GameState newState)
 
 void StateMachine_StartFrame()
 {
-	if (CurrentState != RequestedState) // checks to see if game is changing to a different state, if same state nothing needs to be done
-	{
+	//if (CurrentState != RequestedState) // checks to see if game is changing to a different state, if same state nothing needs to be done
+
 		switch (RequestedState) 
 		{
 		case State_MainMenu: MainMenu() ; break; 
@@ -21,5 +21,5 @@ void StateMachine_StartFrame()
 		case State_GameOver: GameOver() ; break;
 		default: break;
 		}
-	}
+
 }

@@ -1,28 +1,52 @@
 #include "global.h"
 #include "StateMachine.h"
+#include "snake.h"
 
 
+// runs the state "MainMenu" aka the main menu screen
 void MainMenu()
 {
+	State = 1;
+	while (State)
+	{
+	displayMain();
+	commandMain();
+	}
+
+}
+
+// sets the text shown on the main menu
+void displayMain()
+{ 
 	Console_ClearRenderBuffer();
-	int y = 10;
-	Console_SetRenderBuffer_String(26, y++-5, "Welcome to the game of");                                                               
-	Console_SetRenderBuffer_String(2, ++y, "   @@@@@     @@@       @@@         @@         @@@      @@@  @@@@@@@@@@");
-	Console_SetRenderBuffer_String(2, ++y, " @@@@@@@@    @@@       @@@        @@@@        @@@     @@@   @@@@@@@@@@");
-	Console_SetRenderBuffer_String(2, ++y, "@@@    @@@   @@@@      @@@       @@@@@@       @@@   @@@     @@@       ");
-	Console_SetRenderBuffer_String(2, ++y, "@@@@         @@@@@     @@@      @@@  @@@      @@@  @@@      @@@       ");
-	Console_SetRenderBuffer_String(2, ++y, "  @@@@@@@    @@@  @@@  @@@     @@@    @@@     @@@@@@@       @@@@@@@@@@");
-	Console_SetRenderBuffer_String(2, ++y, "       @@@   @@@   @@@ @@@    @@@@@@@@@@@@    @@@  @@@      @@@       ");
-	Console_SetRenderBuffer_String(2, ++y, "@@@     @@@  @@@    @@@@@@   @@@@@@@@@@@@@@   @@@    @@@    @@@       ");
-	Console_SetRenderBuffer_String(2, ++y, "@@@@@@@@@@   @@@     @@@@@  @@@          @@@  @@@     @@@   @@@@@@@@@@");
-	Console_SetRenderBuffer_String(2, ++y, "  @@@@@      @@@       @@@ @@@            @@@ @@@      @@@  @@@@@@@@@@");
-	Console_SetRenderBuffer_String(28, y+30, "PRESS ENTER TO PLAY");
+	int x = GAME_WIDTH, y= GAME_HEIGHT;
+	Console_SetRenderBuffer_String(14, (y/2 -10), "Welcome to the game of");                                                               
+	Console_SetRenderBuffer_String(2, (y / 2 - 3), " @@@@  @@     @@      @      @@    @@ @@@@@@@");
+	Console_SetRenderBuffer_String(2, (y / 2 - 2), "@@  @@ @@@    @@     @@@     @@   @@  @@     ");
+	Console_SetRenderBuffer_String(2, (y/2-1),     "@@     @@ @   @@    @@ @@    @@  @@   @@     ");
+	Console_SetRenderBuffer_String(2, y/2,         " @@@@  @@  @  @@   @@   @@   @@@@@    @@@@@@@");
+	Console_SetRenderBuffer_String(2, (y / 2 + 1), "    @@ @@   @ @@   @@   @@   @@  @@   @@     ");
+	Console_SetRenderBuffer_String(2, (y / 2 + 2), "@@  @@ @@    @@@  @@@@@@@@@  @@   @@  @@     ");
+	Console_SetRenderBuffer_String(2, (y / 2 + 3), " @@@@  @@     @@ @@       @@ @@    @@ @@@@@@@");
+	Console_SetRenderBuffer_String(15, y, "PRESS ENTER TO PLAY");
 	Console_SwapRenderBuffer();
+}
 
+// input keys to trigger change in game state
+void commandMain()
+{// changes from main menu state to the actual game
 	if (GetAsyncKeyState(VK_RETURN) & 1)
+	{
 		StateMachine_ChangeState(State_Game);
+		State = 0;
+		StateMachine_StartFrame();
+	}
 
+// causes the game to exit and the program to close
 	if (GetAsyncKeyState(VK_ESCAPE) & 1)
-		bGameIsRunning = 0;
+	{		
+		exitGame();
+		State = 0;
 
+	}
 }

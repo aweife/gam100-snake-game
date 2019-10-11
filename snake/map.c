@@ -29,8 +29,8 @@ void renderBoundary()
 // Randomly spawn 1 food
 void spawnFood()
 {
-	int x = Random_Range(1, GAME_WIDTH);
-	int y = Random_Range(1, GAME_HEIGHT);
+	int x = Random_Range(1, GAME_WIDTH -1);
+	int y = Random_Range(1, GAME_HEIGHT -1);
 
 	foodArray[0].x = x;
 	foodArray[0].y = y;

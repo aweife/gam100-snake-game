@@ -1,6 +1,4 @@
 #include "global.h"
-#include "StateMachine.h"
-#include "snake.h"
 
 
 // runs the state "MainMenu" aka the main menu screen
@@ -29,13 +27,16 @@ void displayMain()
 	Console_SetRenderBuffer_String(2, (y / 2 + 2), "@@  @@ @@    @@@  @@@@@@@@@  @@   @@  @@     ");
 	Console_SetRenderBuffer_String(2, (y / 2 + 3), " @@@@  @@     @@ @@       @@ @@    @@ @@@@@@@");
 	Console_SetRenderBuffer_String(15, y, "PRESS ENTER TO PLAY");
+	Console_SetRenderBuffer_String(16, y+2, "PRESS ESC TO QUIT");
 	Console_SwapRenderBuffer();
 }
 
 // input keys to trigger change in game state
 void commandMain()
-{// changes from main menu state to the actual game
-	if (GetAsyncKeyState(VK_RETURN) & 1)
+{
+	// changes from main menu state to the actual game
+	// The & 0x8000 is to ensure key only get pressed once
+	if (GetAsyncKeyState(VK_RETURN) & 0x8000)
 	{
 		StateMachine_ChangeState(State_Game);
 		State = 0;
@@ -43,7 +44,7 @@ void commandMain()
 	}
 
 // causes the game to exit and the program to close
-	if (GetAsyncKeyState(VK_ESCAPE) & 1)
+	if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
 	{		
 		exitGame();
 		State = 0;

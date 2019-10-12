@@ -96,6 +96,22 @@ void Console_SetRenderBuffer_Char(int x, int y, char c)
 	// FOREGROUND_RED | FOREGROUND_INTENSITY | BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_INTENSITY;
 }
 
+void Console_SetRenderBuffer_CharColor(int x, int y, char c, WORD attributes)
+{
+#ifdef _DEBUG
+	Console_HandleValidity_Assert();
+#endif
+
+	const int index = x + y * sConsoleSize.X;
+
+	if ((index >= sRenderBufferSize) || (index < 0))
+		return;
+
+	sRenderBuffer[index].Char.AsciiChar = c;
+	sRenderBuffer[index].Attributes = attributes;
+	// FOREGROUND_RED | FOREGROUND_INTENSITY | BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_INTENSITY;
+}
+
 void Console_SetRenderBuffer_String(int x, int y, const char* s)
 {
 #ifdef _DEBUG

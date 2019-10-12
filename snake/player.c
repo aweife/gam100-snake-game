@@ -1,5 +1,4 @@
 #include "player.h"
-#include "StateMachine.h"
 
 // For now I only store 100 bodies' positions, any more is undefined behaviour
 snakeBody snakeBodyArray[100];
@@ -13,6 +12,11 @@ void player_Init()
 	player.eulerY = GAME_HEIGHT * 0.5f;
 	player.direction = DIRECTION_NONE;
 	snakeBodyCount = 1;
+	player.headChar = '^';
+
+	// Initial speed
+	speed = 1;
+	speedCounter = 0;
 }
 
 // Map arrows to player.direction
@@ -20,22 +24,22 @@ void player_GetInput()
 {
 
 	// Limit the player to turn only (right angle)
-	if (GetAsyncKeyState(VK_UP))
+	// The & 0x8000 is to ensure key only get pressed once
+	if (GetAsyncKeyState(VK_UP) & 0x8000)
 		if (player.direction != DIRECTION_UP && player.direction != DIRECTION_DOWN)
-			setDirection(DIRECTION_UP);
-	if (GetAsyncKeyState(VK_RIGHT))
+			setDirection(DIRECTION_UP, '^');
+	if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
 		if (player.direction != DIRECTION_RIGHT && player.direction != DIRECTION_LEFT)
-			setDirection(DIRECTION_RIGHT);
-	if (GetAsyncKeyState(VK_DOWN))
+			setDirection(DIRECTION_RIGHT, '>');
+	if (GetAsyncKeyState(VK_DOWN) & 0x8000)
 		if (player.direction != DIRECTION_DOWN && player.direction != DIRECTION_UP)
-			setDirection(DIRECTION_DOWN);
-	if (GetAsyncKeyState(VK_LEFT))
+			setDirection(DIRECTION_DOWN, 'v');
+	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
 		if (player.direction != DIRECTION_LEFT && player.direction != DIRECTION_RIGHT)
-			setDirection(DIRECTION_LEFT);
+			setDirection(DIRECTION_LEFT, '<');
 
 
-	//if (GetAsyncKeyState(VK_SPACE)) bGameIsRunning = 0;
-	//if (GetAsyncKeyState(VK_SPACE)) grow(); // Debug grow
+	if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) goGameOver(snakeBodyCount-1);
 }
 
 // Grow the snake by 1
@@ -55,16 +59,22 @@ void player_Update(double euler)
 	switch (player.direction)
 	{
 	case DIRECTION_UP:
-		player.eulerY -= euler;
+		player.eulerY -= euler * speed;
 		break;
 	case DIRECTION_RIGHT:
-		player.eulerX += euler;
+		player.eulerX += euler * speed;
 		break;
 	case DIRECTION_DOWN:
-		player.eulerY += euler;
+		player.eulerY += euler * speed;
 		break;
 	case DIRECTION_LEFT:
-		player.eulerX -= euler;
+		player.eulerX -= euler * speed;
+		break;
+	case DIRECTION_NONE:
+		player.eulerX = GAME_WIDTH * 0.5f;
+		player.eulerY = GAME_HEIGHT * 0.5f;
+		break;
+	default:
 		break;
 	}
 
@@ -75,12 +85,14 @@ void player_Update(double euler)
 	checkCollision();
 	follow();
 	animate();
+	speedUp();
 }
 
 // Update by player_GetInput()
-void setDirection(DIRECTION dir)
+void setDirection(DIRECTION dir, char c)
 {
 	player.direction = dir;
+	player.headChar = c;
 }
 
 // Loop through the bodies from the back and update their positions 
@@ -108,11 +120,14 @@ void follow()
 void animate()
 {
 	// Render the head separately
-	Console_SetRenderBuffer_Char(snakeBodyArray[0].position.x, snakeBodyArray[0].position.y, 'H');
+	Console_SetRenderBuffer_CharColor(snakeBodyArray[0].position.x, snakeBodyArray[0].position.y, player.headChar, 
+		FOREGROUND_RED);
 
 	// Render body (+1 because of head
 	for (int i = 1; i < snakeBodyCount; i++)
-		Console_SetRenderBuffer_Char(snakeBodyArray[i].position.x, snakeBodyArray[i].position.y, 'B');
+		Console_SetRenderBuffer_CharColor(snakeBodyArray[i].position.x, snakeBodyArray[i].position.y, 'O',
+
+		FOREGROUND_INTENSITY | FOREGROUND_GREEN);
 
 	// OLD CODE: Moving the head and clearing the tail using putchar()
 	//// While snake is moving, only clear the char at the last body's tailPosition
@@ -129,14 +144,14 @@ void checkCollision()
 		player.position.x > GAME_WIDTH - 1 ||	// Right
 		player.position.y < 1 ||			// Top
 		player.position.y > GAME_HEIGHT - 1)	// Bottom
-		goGameOver();
+		goGameOver(snakeBodyCount - 1);
 
 	// Collision against itself but only from the 4th body part onwards
 	if (snakeBodyCount > 3)
 		for (int i = 3; i < snakeBodyCount; i++)
 			if (player.position.x == snakeBodyArray[i].position.x &&
 				player.position.y == snakeBodyArray[i].position.y)
-				goGameOver();
+				goGameOver(snakeBodyCount - 1);
 
 	if (player.position.x == foodArray[0].x && player.position.y == foodArray[0].y)
 	{
@@ -145,5 +160,16 @@ void checkCollision()
 
 		// Then grow
 		grow();
+	}
+}
+
+void speedUp()
+{
+	speedCounter = (Clock_GetElapsedTimeMs() / ONESECONDINMS) - totalElapsedTime;
+	if (speedCounter > TENSECONDS)
+	{
+		totalElapsedTime += speedCounter;
+		speedCounter = 0;
+		speed+= 0.5;
 	}
 }

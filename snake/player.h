@@ -26,6 +26,7 @@ typedef struct {
 // Snake body
 typedef struct {
 	coordinates position;
+	CONSOLECOLOR color;
 } snakeBody;
 
 int snakeBodyCount;

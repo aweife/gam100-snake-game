@@ -33,12 +33,12 @@ int main(void)
 	return 0;
 }
 
-// Initialise the console, player and map
+// Initialise the player and map
 void initGame()
 {
 	// Init player
 	player_Init();
-	spawnFood();
+	map_Init();
 }
 
 // The game loop

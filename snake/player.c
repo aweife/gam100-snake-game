@@ -15,7 +15,7 @@ void player_Init()
 	player.headChar = '^';
 
 	// Initial speed
-	speed = 1;
+	speed = 2;
 	speedCounter = 0;
 }
 
@@ -39,13 +39,15 @@ void player_GetInput()
 			setDirection(DIRECTION_LEFT, '<');
 
 
-	if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) goGameOver(snakeBodyCount-1);
+	if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) goGameOver(snakeBodyCount - 1);
 }
 
 // Grow the snake by 1
-void grow()
+void grow(CONSOLECOLOR color)
 {
 	snakeBodyArray[snakeBodyCount].position = snakeBodyArray[snakeBodyCount - 1].position;
+	snakeBodyArray[snakeBodyCount].color = color;
+
 	snakeBodyCount++;
 }
 
@@ -59,16 +61,16 @@ void player_Update(double euler)
 	switch (player.direction)
 	{
 	case DIRECTION_UP:
-		player.eulerY -= euler * speed;
+		player.eulerY -= euler * log(speed);
 		break;
 	case DIRECTION_RIGHT:
-		player.eulerX += euler * speed;
+		player.eulerX += euler * log(speed);
 		break;
 	case DIRECTION_DOWN:
-		player.eulerY += euler * speed;
+		player.eulerY += euler * log(speed);
 		break;
 	case DIRECTION_LEFT:
-		player.eulerX -= euler * speed;
+		player.eulerX -= euler * log(speed);
 		break;
 	case DIRECTION_NONE:
 		player.eulerX = GAME_WIDTH * 0.5f;
@@ -120,14 +122,13 @@ void follow()
 void animate()
 {
 	// Render the head separately
-	Console_SetRenderBuffer_CharColor(snakeBodyArray[0].position.x, snakeBodyArray[0].position.y, player.headChar, 
+	Console_SetRenderBuffer_CharColor(snakeBodyArray[0].position.x, snakeBodyArray[0].position.y, player.headChar,
 		FOREGROUND_RED);
 
 	// Render body (+1 because of head
 	for (int i = 1; i < snakeBodyCount; i++)
 		Console_SetRenderBuffer_CharColor(snakeBodyArray[i].position.x, snakeBodyArray[i].position.y, 'O',
-
-		FOREGROUND_INTENSITY | FOREGROUND_GREEN);
+			snakeBodyArray[i].color);
 
 	// OLD CODE: Moving the head and clearing the tail using putchar()
 	//// While snake is moving, only clear the char at the last body's tailPosition
@@ -153,16 +154,24 @@ void checkCollision()
 				player.position.y == snakeBodyArray[i].position.y)
 				goGameOver(snakeBodyCount - 1);
 
-	if (player.position.x == foodArray[0].x && player.position.y == foodArray[0].y)
-	{
-		// Remove the food first
-		spawnFood();
+	// Collision with food
+	for (int i = 0; i < foodCount; i++)
+		if (player.position.x == foodArray[i].x && player.position.y == foodArray[i].y)
+		{
+			// Remove the food first
+			spawnFood(i);
 
-		// Then grow
-		grow();
-	}
+			// Then grow
+			grow(GREEN);
+		}
+
+	// Collision with walls
+	for (int i = 0; i < wallCount; i++)
+		if (player.position.x == wallArray[i].x && player.position.y == wallArray[i].y)
+			goGameOver(snakeBodyCount - 1);
 }
 
+// Speed up player once every 10s, and grow it by 1
 void speedUp()
 {
 	speedCounter = (Clock_GetElapsedTimeMs() / ONESECONDINMS) - totalElapsedTime;
@@ -170,6 +179,10 @@ void speedUp()
 	{
 		totalElapsedTime += speedCounter;
 		speedCounter = 0;
-		speed+= 0.5;
+
+		// Only speed up when player ate the first food
+		if (snakeBodyCount == 1) return;
+		speed+=snakeBodyCount;
+		grow(DARKGREEN);
 	}
 }
